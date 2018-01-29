@@ -56,5 +56,10 @@ for i=3:size(a,1)
     end
 end
 
-
-
+%% Wavelet
+signal = normal_a{1};
+[ t, ftest, m ] = wavelet(signal{1}, signal{2});
+figure
+imagesc(t,ftest,abs(m))
+axis xy
+colormap(jet(256))
