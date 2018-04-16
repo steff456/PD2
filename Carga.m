@@ -46,18 +46,18 @@ for i=3:size(a,1)
         bin = strsplit(act_s(j).name,'_');
         [sample_b, freq_b] = audioread(file_n);
         new_b = {sample_b, freq_b};
-        if strcmp(bin(1), 'extrahls')
-            extrah_b{end+1} = new_a;
+        if strcmp(bin(1), 'extrastole')
+            extrah_b{end+1} = new_b;
         elseif strcmp(bin(1),'murmur')
-            murmur_b{end+1} = new_a;
+            murmur_b{end+1} = new_b;
         elseif strcmp(bin(1),'normal')
-            normal_b{end+1} = new_a;    
+            normal_b{end+1} = new_b;    
         end
     end
 end
 
 %% Wavelet
-signal = normal_a{1};
+signal = normal_a{2};
 [ t, ftest, m ] = wavelet(signal{1}, signal{2});
 figure
 imagesc(t,ftest,abs(m))
