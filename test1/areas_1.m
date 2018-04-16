@@ -1,17 +1,18 @@
 load('Signal2.mat')
 v_values=Signal2.value;
+x=1:length(v_values);
 [pk, lk, width, prominence]=findpeaks(v_values);%,'MinPeakDistance', 40);
-min(pk(lk(1):lk(2))) %BASE
+% min(pk(lk(1):lk(2))) %BASE
 lk_high=lk(prominence>0.1);
 lk_down=lk(prominence<0.1);
 if lk_down(1)<lk_high(1)
-    n_minInit=min(pk(lk_down(1):lk_high(1)));
+    n_minInit=min(v_values(lk_down(1):lk_high(1)));
     lk_down(1)=[];
 else 
-    n_minInit=min(pk(lk_high(1):lk_down(1)));
+    n_minInit=min(v_values(lk_high(1):lk_down(1)));
 end
-n_areaLong=trapz(pk(n_minInit:min(pk(lk_high(1):lk_down(1)))));
-n_areaShort=trapz(pk((min(pk(lk_high(1):lk_down(1))):min(pk(lk_down(1):lk_high(2)))));
+n_areaLong=trapz(v_values(n_minInit:min(v_values(lk_high(1):lk_down(1)))));
+n_areaShort=trapz(v_values(min(v_values(lk_high(1):lk_down(1))):min(v_values(lk_down(1):lk_high(2)))));
 % pk_new=pk(prominence<1.2);
 % lk_new=lk(prominence<1.2);
 % figure, plot(1:length(v_values),v_values,lk_new, pk_new, 'o' )
