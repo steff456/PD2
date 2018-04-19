@@ -1,17 +1,21 @@
 load('Signal2.mat')
 v_values=Signal2.value;
 x=1:length(v_values);
+%pk = los picos [y]
+%lk = los picos [x]
+%prominence = altura
 [pk, lk, width, prominence]=findpeaks(v_values);%,'MinPeakDistance', 40);
 % min(pk(lk(1):lk(2))) %BASE
 lk_high=lk(prominence>0.1);
 lk_down=lk(prominence<0.1);
 if lk_down(1)<lk_high(1)
     n_minInit=min(v_values(lk_down(1):lk_high(1)));
-    lk_down(1)=[];
+    x_start = x(min(v_values(lk_down(1):lk_high(1)))==v_values);
 else 
     n_minInit=min(v_values(lk_high(1):lk_down(1)));
 end
-n_areaLong=trapz(v_values(n_minInit:min(v_values(lk_high(1):lk_down(1)))));
+b = x(min(v_values(lk_down(2):lk_high(2)))==v_values);
+n_areaLong=trapz(v_values(n_minInit:x(min(v_values(lk_high(1):lk_down(1))))));
 n_areaShort=trapz(v_values(min(v_values(lk_high(1):lk_down(1))):min(v_values(lk_down(1):lk_high(2)))));
 % pk_new=pk(prominence<1.2);
 % lk_new=lk(prominence<1.2);
