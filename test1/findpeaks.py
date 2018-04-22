@@ -1,6 +1,6 @@
 # see also: https://github.com/MonsieurV/py-findpeaks/blob/master/tests/libs/detect_peaks.py
 
-from . import detect_peaks
+from detect_peaks import detect_peaks
 
 __author__ = 'Kricki (https://github.com/Kricki)'
 __version__ = "1.0.0"

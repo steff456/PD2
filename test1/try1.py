@@ -2,15 +2,50 @@
 import scipy.io as sio
 import matplotlib.pyplot as plt
 import numpy as np
-from scipy.signal import find_peaks_cwt
+import csv
+from detect_peaks import detect_peaks
+from findpeaks import compute_peak_prominence
+
+Z_ao = 0.14
 
 file = csv.DictReader(open("Signal2.csv"), delimiter=";")
-my_list=[]
+v_values = []
 for row in file:
-	my_list.append(row['value'])
+	v_values.append(float(row['value']))
+
+v_values = list(map(lambda k: k - min(v_values), v_values))
+x = np.array(range(0,len(v_values)))
+ind = detect_peaks(v_values)
+prominence = compute_peak_prominence(v_values, ind)
+
+lk_high = []
+lk_down = []
+for p in prominence:
+	if p > 0.1:
+		lk_high.append(ind[prominence.index(p)])
+	elif p < 0.1:
+		lk_down.append(ind[prominence.index(p)])
 
 
+if lk_down[0]<lk_high[0]:
+	aux = min(v_values[lk_down[0]:lk_high[0]])
+	x_ind = list(map(lambda k: k == aux, v_values))
+	x_start = x[x_ind]
+else:
+	aux = min(v_values[lk_high[0]:lk_down[0]])
+	x_ind = list(map(lambda k: k == aux, v_values))
+	x_start = x[x_ind]
 
+aux_2 = min(v_values[lk_down[1]:lk_high[1]])
+x_ind_2 = list(map(lambda k: k == aux_2, v_values))
+x_b = x[x_ind_2]
 
-plt.plot(my_list)
+n_area = np.trapz(v_values[x_start[0]:x_b[0]])
+cardiacO = (n_area*HR)/(Z_ao*1000)
+
+# SV=area / 0.14 cm³
+# cardiaO=(SV*HR)/1000 L
+# Heart Rate Variability
+
+plt.plot(v_values)
 plt.show()
