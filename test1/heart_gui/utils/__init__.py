@@ -1,11 +1,14 @@
-my_file = "Signal2.csv"
+# -*- coding: utf-8 -*-
+
+import scipy.io as sio
+import matplotlib.pyplot as plt
+import numpy as np
+import csv
+from .detect_peaks import detect_peaks
+from .findpeaks import compute_peak_prominence
 
 # Calculate the Pleth
 def let_the_magic_work_pleth(my_file):
-    import scipy.io as sio
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import csv
     file = csv.DictReader(open(my_file), delimiter=",")
     v_pleth = []
     for row in file:
@@ -13,14 +16,11 @@ def let_the_magic_work_pleth(my_file):
             n_value = row[file.fieldnames[4]]
             v_pleth.append(float(n_value))
 
-    return v_pleth
+    return np.array(v_pleth)
 
 # Calculate the Heart Rate
 def let_the_magic_work_HR(my_file):
-    import scipy.io as sio
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import csv
+    
     file = csv.DictReader(open(my_file), delimiter=",")
     # lets do this for Heart Rate
     # 2 'NONIN_HR_8BEAT_FOR_DISPLAY'
@@ -34,12 +34,6 @@ def let_the_magic_work_HR(my_file):
 
 # Calculate the Cardiac Output
 def let_the_magic_work_CO(my_file, v_heartrate):
-    import scipy.io as sio
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import csv
-    from detect_peaks import detect_peaks
-    from findpeaks import compute_peak_prominence
 
     Z_ao = 0.14
 
@@ -101,10 +95,7 @@ def let_the_magic_work_CO(my_file, v_heartrate):
 
 # Calculate the Saturation
 def let_the_magic_work_SO2(my_file):
-    import scipy.io as sio
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import csv
+    
     
     file = csv.DictReader(open(my_file), delimiter=",")
     # lets do this for Heart Rate
@@ -119,12 +110,6 @@ def let_the_magic_work_SO2(my_file):
 
 # Calculate the HRV
 def let_the_magic_work_HRV(my_file):
-    import scipy.io as sio
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import csv
-    from detect_peaks import detect_peaks
-    from findpeaks import compute_peak_prominence
 
     file = csv.DictReader(open(my_file), delimiter=",")
     v_values = []
@@ -141,54 +126,15 @@ def let_the_magic_work_HRV(my_file):
     lk_high = []
     
     for kk in range(len(prominence)):
-        # p = prominence[kk]
-        if p > 0.1:
-            lk_high.append(ind[kk])
+    	p = prominence[kk]
+    	if p > 0.1:
+        	lk_high.append(ind[kk])
 
     cardiacO = []
     n_area = []
-    HR = np.mean(v_heartrate)
-
+    # HR = np.mean(v_heartrate)
+    x_delta = []
     for idw in range(len(lk_high)-1):
-        lk_high[idw]:lk_high[idw+1]
-        
-        if lk_down[idw] < lk_high[idw]:
-            aux = max(v_values[lk_down[idw]:lk_high[idw]])
-            x_ind = list(map(lambda k1: k1 == aux, v_values[lk_down[idw]:lk_high[idw]]))
-            x_aux1 = x[lk_down[idw]:lk_high[idw]]
-            x_start = x_aux1[x_ind]
-            aux_2 = min(v_values[lk_down[idw+1]:lk_high[idw+1]])
-            x_ind_2 = list(map(lambda k2: k2 == aux_2, v_values[lk_down[idw+1]:lk_high[idw+1]]))
-            x_aux2 = x[lk_down[idw+1]:lk_high[idw+1]]
-            x_b = x_aux2[x_ind_2]
-        else:
-            aux = min(v_values[lk_high[idw]:lk_down[idw]])
-            x_ind = list(map(lambda k1: k1 == aux, v_values[lk_high[idw]:lk_down[idw]]))
-            x_aux1 = x[lk_high[idw]:lk_down[idw]]
-            x_start = x_aux1[x_ind]
-            aux_2 = min(v_values[lk_high[idw+1]:lk_down[idw+1]])
-            x_ind_2 = list(map(lambda k2: k2 == aux_2, v_values[lk_high[idw+1]:lk_down[idw+1]]))
-            x_aux2 = x[lk_high[idw+1]:lk_down[idw+1]]
-            x_b = x_aux2[x_ind_2]
-        n_area.append(np.trapz(v_values[x_start[0]:x_b[0]]))
-        cardiacO.append((n_area[idw]*HR)/(Z_ao*1000))
+        x_delta.append(x[lk_high[idw+1]]-x[lk_high[idw]])
 
-    # SV=area / 0.14 cm³
-    # cardiaO=(SV*HR)/1000 L
-    # Heart Rate Variability
-
-    # plt.plot(v_values)
-    # plt.show()
-    return cardiacO
-
-
-    file = csv.DictReader(open(my_file), delimiter=",")
-    # lets do this for Heart Rate
-    # 2 'NONIN_HR_8BEAT_FOR_DISPLAY'
-    v_heartrate = []
-    for row in file:
-        if row[file.fieldnames[1]]=='NONIN_HR_8BEAT_FOR_DISPLAY':
-            n_value = row[file.fieldnames[4]]
-            v_heartrate.append(float(n_value))
-
-    return v_heartrate
+    return x_delta
