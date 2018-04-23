@@ -15,8 +15,8 @@ import tornado.web
 import tornado.ioloop
 
 # Local imports
-from candax.db import RiakDB
-from candax.routes import ROUTES
+from cortech.db import RiakDB
+from cortech.routes import ROUTES
 
 # Other library imports
 import coloredlogs

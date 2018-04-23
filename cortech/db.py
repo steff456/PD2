@@ -10,6 +10,7 @@ from concurrent.futures import ThreadPoolExecutor
 MAX_WORKERS = 10
 LOGGER = logging.getLogger(__name__)
 
+
 def threadexecute(f):
     @functools.wraps(f)
     @tornado.gen.coroutine
@@ -18,8 +19,10 @@ def threadexecute(f):
         return resp
     return wrapper
 
+
 class RiakDB:
     instance = None
+
     def __init__(self, riak_url):
         url = urlparse(riak_url)
         self.client = riak.RiakClient(

@@ -82,7 +82,7 @@ def forward(net, transform, refer, message):
     out_file.seek(0)
 
     s3 = boto3.client('s3')
-    key ="{0}/{1}".format(message['device_id'], message['id'])
+    key = "{0}/{1}".format(message['device_id'], message['id'])
     s3.put_object(
         Bucket=S3_BUCKET,
         Body=out_file,

@@ -23,6 +23,7 @@ import tornado.web
 
 LOGGER = logging.getLogger(__name__)
 
+
 class BaseHandler(tornado.web.RequestHandler):
     def initialize(self, db=None):
         self.db = db
