@@ -22,7 +22,8 @@ class MainHandler(rest.BaseHandler):
         # print("MSG: {0}".format(self.application.db is None))
         print(_id)
         if _id is None:
-            objs = yield self.application.db.get_all(bucket)
+            self.set_status(403)
+            # objs = yield self.application.db.get_all(bucket)
         else:
             objs = yield self.application.db.get(bucket, _id)
         # self.set_status(403)

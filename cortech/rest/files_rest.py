@@ -33,8 +33,8 @@ class MainHandler(rest.BaseHandler):
     @tornado.gen.coroutine
     def post(self, *args):
         print(self.json_args)
-        self.json_args['key'] = self.application.count
-        self.application.count = self.application.count + 1
+        # self.json_args['key'] = str(self.application.count)
+        # self.application.count = self.application.count + 1
         _id = yield self.application.db.insert(bucket, self.json_args)
         # if self.json_args is not None:
         #   ret, perm, email, _type = yield self.authenticate('administrador')

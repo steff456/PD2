@@ -18,7 +18,7 @@ MIT, see LICENSE for more details.
 
 import os
 import sys
-#New submodules defined inside this module must be imported here
+# New submodules defined inside this module must be imported here
 from . import flights_handler
 flights_handler
 

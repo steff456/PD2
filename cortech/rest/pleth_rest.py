@@ -8,6 +8,7 @@ import datetime
 import tornado.web
 import tornado.escape
 import cortech.rest as rest
+from cortech.rest.process_functions import let_the_magic_work_pleth
 
 LOGGER = logging.getLogger(__name__)
 bucket = 'files'
@@ -18,13 +19,15 @@ class MainHandler(rest.BaseHandler):
         self.db = db
 
     @tornado.gen.coroutine
-    def get(self, _, _id=None):
+    def get(self, _id=None):
         # print("MSG: {0}".format(self.application.db is None))
         print(_id)
         if _id is None:
-            objs = yield self.application.db.get_all(bucket)
+            # objs = yield self.application.db.get_all(bucket)
+            self.set_status(403)
         else:
             objs = yield self.application.db.get(bucket, _id)
+            pleth = let_the_magic_work_pleth(objs['file'])
         # self.set_status(403)
         objs = json.dumps(objs)
         self.set_header('Content-Type', 'text/javascript;charset=utf-8')

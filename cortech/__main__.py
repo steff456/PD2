@@ -48,13 +48,21 @@ def main():
     logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
     settings = {"static_path": os.path.join(
         os.path.dirname(__file__), "static")}
+    # application = tornado.web.Application(
+        # ROUTES, debug=True, serve_traceback=True, autoreload=True,
+        # **settings)
     application = tornado.web.Application(
-        ROUTES, debug=True, serve_traceback=True, autoreload=True,
-        **settings)
+                                    ROUTES,
+                                    # static_path='static',
+                                    serve_traceback=True,
+                                    autoreload=True,
+                                    debug=True,
+                                    **settings
+                                    )
     LOGGER.info("Server is now at: 127.0.0.1:8000")
     ioloop = tornado.ioloop.IOLoop.instance()
-
     application.db = RiakDB(args.riak_url)
+    application.count = 0
     application.listen(args.port)
     try:
         ioloop.start()

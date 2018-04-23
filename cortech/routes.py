@@ -35,7 +35,7 @@ REST = [
 
 # Define new web rendering route associations
 WEB = [
-    (r'/flights', web.flights_handler.MainHandler)
+    (r'/', web.flights_handler.MainHandler)
 ]
 
 ROUTES = REST + WEB
