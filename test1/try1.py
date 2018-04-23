@@ -44,34 +44,70 @@ ind = detect_peaks(v_values)
 prominence = compute_peak_prominence(v_values, ind)
 lk_high = []
 lk_down = []
+# ind_aux = list(map(lambda k: k , ind))
+
+for kk in range(len(prominence)):
+	p = prominence[kk]
+	if p > 0.1:
+		lk_high.append(ind[kk])
+	elif p < 0.1:
+		lk_down.append(ind[kk])
+
+#TRASH
 for p in prominence:
 	if p > 0.1:
-		lk_high.append(ind[prominence.index(p)])
+		lk_high.append(ind_aux[prominence.index(p)])
+		ind_aux.remove(ind_aux[prominence.index(p)])
 	elif p < 0.1:
 		lk_down.append(ind[prominence.index(p)])
 
+cardiacO = []
+n_area = []
+HR = np.mean(v_heartrate)
 
-if lk_down[0]<lk_high[0]:
-	aux = min(v_values[lk_down[0]:lk_high[0]])
-	x_ind = list(map(lambda k: k == aux, v_values))
-	x_start = x[x_ind]
-else:
-	aux = min(v_values[lk_high[0]:lk_down[0]])
-	x_ind = list(map(lambda k: k == aux, v_values))
-	x_start = x[x_ind]
-
-aux_2 = min(v_values[lk_down[1]:lk_high[1]])
-x_ind_2 = list(map(lambda k: k == aux_2, v_values))
-x_b = x[x_ind_2]
-
-n_area = np.trapz(v_values[x_start[0]:x_b[0]])
-HR=100
-cardiacO = (n_area*HR)/(Z_ao*1000)
+for idw in range(len(lk_down)-1):
+	if lk_down[idw] < lk_high[idw]:
+		aux = min(v_values[lk_down[idw]:lk_high[idw]])
+		x_ind = list(map(lambda k1: k1 == aux, v_values[lk_down[idw]:lk_high[idw]]))
+		x_aux1 = x[lk_down[idw]:lk_high[idw]]
+		x_start = x_aux1[x_ind]
+		aux_2 = min(v_values[lk_down[idw+1]:lk_high[idw+1]])
+		x_ind_2 = list(map(lambda k2: k2 == aux_2, v_values[lk_down[idw+1]:lk_high[idw+1]]))
+		x_aux2 = x[lk_down[idw+1]:lk_high[idw+1]]
+		x_b = x_aux2[x_ind_2]
+	else:
+		aux = min(v_values[lk_high[idw]:lk_down[idw]])
+		x_ind = list(map(lambda k1: k1 == aux, v_values[lk_high[idw]:lk_down[idw]]))
+		x_aux1 = x[lk_high[idw]:lk_down[idw]]
+		x_start = x_aux1[x_ind]
+		aux_2 = min(v_values[lk_high[idw+1]:lk_down[idw+1]])
+		x_ind_2 = list(map(lambda k2: k2 == aux_2, v_values[lk_high[idw+1]:lk_down[idw+1]]))
+		x_aux2 = x[lk_high[idw+1]:lk_down[idw+1]]
+		x_b = x_aux2[x_ind_2]
+	n_area.append(np.trapz(v_values[x_start[0]:x_b[0]]))
+	cardiacO.append((n_area[idw]*HR)/(Z_ao*1000))
 # SV=area / 0.14 cm³
 # cardiaO=(SV*HR)/1000 L
 # Heart Rate Variability
 
 # plt.plot(v_values)
 # plt.show()
+
+	
+	if lk_down[0]<lk_high[0]:
+		aux = min(v_values[lk_down[0]:lk_high[0]])
+		x_ind = list(map(lambda k: k == aux, v_values))
+		x_start = x[x_ind]
+	else:
+		aux = min(v_values[lk_high[0]:lk_down[0]])
+		x_ind = list(map(lambda k: k == aux, v_values))
+		x_start = x[x_ind]
+
+	aux_2 = min(v_values[lk_down[1]:lk_high[1]])
+	x_ind_2 = list(map(lambda k: k == aux_2, v_values))
+	x_b = x[x_ind_2]
+	n_meanHR = np.mean(v_heartrate)
+	n_area = np.trapz(v_values[x_start[0]:x_b[0]])
+	cardiacO = (n_area*HR)/(Z_ao*1000)
 
 
