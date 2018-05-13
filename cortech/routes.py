@@ -17,20 +17,21 @@ visit: http://www.tornadoweb.org/en/stable/guide/structure.html
 import os
 import sys
 import cortech.web as web
-import cortech.rest.files_rest as files_rest
+import cortech.ws as ws
 import cortech.rest.pleth_rest as pleth_rest
 import cortech.rest.oxigen_saturation_rest as oxigen_saturation_rest
 import cortech.rest.frequency_rest as frequency_rest
 import cortech.rest.cardiac_output_rest as cardiac_output_rest
+import cortech.rest.heart_rate_variability_rest as heart_rate_variability_rest
 # import cortech.rest as rest
 
 # Define new rest associations
 REST = [
-    (r'/files(/?(.+)?)', files_rest.MainHandler),
-    (r'/pleth/?(.+)?', pleth_rest.MainHandler),
-    (r'/oxigen_saturation/?(.+)?', oxigen_saturation_rest.MainHandler),
-    (r'/frequency/?(.+)?', frequency_rest.MainHandler),
-    (r'/cardiac_output/?(.+)?', cardiac_output_rest.MainHandler)
+    (r'/pleth', pleth_rest.MainHandler),
+    (r'/oxigen_saturation', oxigen_saturation_rest.MainHandler),
+    (r'/frequency', frequency_rest.MainHandler),
+    (r'/hrv', heart_rate_variability_rest.MainHandler),
+    (r'/cardiac_output', cardiac_output_rest.MainHandler)
 ]
 
 # Define new web rendering route associations
@@ -38,4 +39,4 @@ WEB = [
     (r'/', web.flights_handler.MainHandler)
 ]
 
-ROUTES = REST + WEB
+ROUTES = REST + WEB + WS

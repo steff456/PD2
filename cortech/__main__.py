@@ -8,6 +8,8 @@ import os
 import sys
 import logging
 import argparse
+import motor
+import time
 import os.path as osp
 
 # Tornado imports
@@ -15,7 +17,7 @@ import tornado.web
 import tornado.ioloop
 
 # Local imports
-from cortech.db import RiakDB
+# from cortech.db import RiakDB
 from cortech.routes import ROUTES
 
 # Other library imports
@@ -24,8 +26,13 @@ import coloredlogs
 parser = argparse.ArgumentParser(
     description='Un servidor muy bonito')
 
-parser.add_argument('--riak-url', type=str, default='pbc://localhost:8087',
-                    help='Riak url endpoint used to locate DB')
+parser.add_argument('--mongo-url', type=str,
+                    default='mongodb://localhost:27017',
+                    help='Mongo url endpoint used to locate DB')
+parser.add_argument('--mongo-db', type=str, default='pulseO',
+                    help='Mongo database name')
+parser.add_argument('--mongo-col', type=str, default='prueba',
+                    help='Mongo collection name')
 parser.add_argument('--port', type=int, default=8000,
                     help='TCP port used to deploy the server')
 
@@ -48,12 +55,8 @@ def main():
     logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
     settings = {"static_path": os.path.join(
         os.path.dirname(__file__), "static")}
-    # application = tornado.web.Application(
-        # ROUTES, debug=True, serve_traceback=True, autoreload=True,
-        # **settings)
     application = tornado.web.Application(
                                     ROUTES,
-                                    # static_path='static',
                                     serve_traceback=True,
                                     autoreload=True,
                                     debug=True,
@@ -61,8 +64,9 @@ def main():
                                     )
     LOGGER.info("Server is now at: 127.0.0.1:8000")
     ioloop = tornado.ioloop.IOLoop.instance()
-    application.db = RiakDB(args.riak_url)
-    application.count = 0
+    database = motor.motor_tornado.MotorClient(args.mongo_url)
+    application.db = database[args.mongo_db][args.mongo_col]
+    application.start_time = time.time()
     application.listen(args.port)
     try:
         ioloop.start()

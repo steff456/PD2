@@ -7,10 +7,71 @@ import logging
 import datetime
 import tornado.web
 import tornado.escape
+from bson.objectid import ObjectId
 import cortech.rest as rest
 
 LOGGER = logging.getLogger(__name__)
-bucket = 'files'
+
+
+def calculate_CO(v_values, v_heartrate):
+    '''
+    v_values are the pleth values for the measure and v_heartrate are the values
+    for the heartrate data obtained by the pulse oximeter
+    '''
+    Z_ao = 0.14
+
+    v_values = list(map(lambda k: k - min(v_values), v_values))
+    x = np.array(range(0, len(v_values)))
+    ind = detect_peaks(v_values)
+    prominence = compute_peak_prominence(v_values, ind)
+
+    lk_high = []
+    lk_down = []
+
+    for kk in range(len(prominence)):
+        p = prominence[kk]
+        if p > 0.1:
+            lk_high.append(ind[kk])
+        elif p < 0.1:
+            lk_down.append(ind[kk])
+
+    cardiacO = []
+    n_area = []
+    HR = np.mean(v_heartrate)
+
+    for idw in range(len(lk_down)-1):
+        if lk_down[idw] < lk_high[idw]:
+            aux = min(v_values[lk_down[idw]:lk_high[idw]])
+            x_ind = list(map(lambda k1: k1 == aux,
+                             v_values[lk_down[idw]:lk_high[idw]]))
+            x_aux1 = x[lk_down[idw]:lk_high[idw]]
+            x_start = x_aux1[x_ind]
+            aux_2 = min(v_values[lk_down[idw+1]:lk_high[idw+1]])
+            x_ind_2 = list(map(lambda k2: k2 == aux_2,
+                               v_values[lk_down[idw+1]:lk_high[idw+1]]))
+            x_aux2 = x[lk_down[idw+1]:lk_high[idw+1]]
+            x_b = x_aux2[x_ind_2]
+        else:
+            aux = min(v_values[lk_high[idw]:lk_down[idw]])
+            x_ind = list(map(lambda k1: k1 == aux,
+                             v_values[lk_high[idw]:lk_down[idw]]))
+            x_aux1 = x[lk_high[idw]:lk_down[idw]]
+            x_start = x_aux1[x_ind]
+            aux_2 = min(v_values[lk_high[idw+1]:lk_down[idw+1]])
+            x_ind_2 = list(map(lambda k2: k2 == aux_2,
+                               v_values[lk_high[idw+1]:lk_down[idw+1]]))
+            x_aux2 = x[lk_high[idw+1]:lk_down[idw+1]]
+            x_b = x_aux2[x_ind_2]
+        n_area.append(np.trapz(v_values[x_start[0]:x_b[0]]))
+        cardiacO.append((n_area[idw]*HR)/(Z_ao*1000))
+
+    # SV=area / 0.14 cm³
+    # cardiaO=(SV*HR)/1000 L
+    # Heart Rate Variability
+
+    # plt.plot(v_values)
+    # plt.show()
+    return cardiacO
 
 
 class MainHandler(rest.BaseHandler):
@@ -18,59 +79,25 @@ class MainHandler(rest.BaseHandler):
         self.db = db
 
     @tornado.gen.coroutine
-    def get(self, _, _id=None):
-        # print("MSG: {0}".format(self.application.db is None))
-        print(_id)
-        if _id is None:
-            self.set_status(403)
-            # objs = yield self.application.db.get_all(bucket)
-        else:
-            objs = yield self.application.db.get(bucket, _id)
+    def get(self, *args):
+        v_pleth = []
+        query1 = {'time': {'$gte': self.application.start_time},
+                  'metric': 'MDC_PULS_OXIM_PLETH'}
+        cur = self.application.db.find(query1)
+        while(yield cur.fetch_next):
+            obj = cur.next_object()
+            print(obj)
+            v_pleth.append(obj['value'])
+        v_hr = []
+        query2 = {'time': {'$gte': self.application.start_time},
+                  'metric': 'MDC_PULS_OXIM_PULS_RATE'}
+        cur = self.application.db.find(query2)
+        while(yield cur.fetch_next):
+            obj = cur.next_object()
+            print(obj)
+            v_hr.append(obj['value'])
+        CO = yield calculate_CO(v_pleth, v_hr)
         # self.set_status(403)
-        objs = json.dumps(objs)
+        objs = json.dumps(CO)
         self.set_header('Content-Type', 'text/javascript;charset=utf-8')
         self.write(objs)
-
-    # @tornado.gen.coroutine
-    # def post(self, *args):
-    #     print(self.json_args)
-    #     _id = yield self.application.db.insert(bucket, self.json_args)
-        # if self.json_args is not None:
-        #   ret, perm, email, _type = yield self.authenticate('administrador')
-        #   if perm:
-        #     edgarin= aerolinea.Aerolinea.from_json(self.json_args)
-        #     response= yield tm.registrar_aerolinea(edgarin)
-        #     self.set_status(201)
-        #     response = response.json()
-        #   else:
-        #     response = tornado.escape.json_encode(ret)
-        #     self.set_status(403)
-        # else:
-        #   self.set_status(400)
-        #   response = "Error: Content-Type must be application/json"
-        # response = "Unknown"
-        # self.set_header('Content-Type', 'text/javascript;charset=utf-8')
-        # self.write(_id)
-
-    # @tornado.gen.coroutine
-    # def put(self, *args):
-    #     # print("MSG: {0}".format(self.application.db is None))
-    #     objs = yield self.application.db.update(bucket, self.json_args)
-    #     # self.set_status(403)
-    #     print(objs)
-    #     objs = json.dumps(objs)
-    #     self.set_header('Content-Type', 'text/javascript;charset=utf-8')
-    #     self.write(objs)
-
-    # @tornado.gen.coroutine
-    # def delete(self, _, _id=None):
-    #     print(_id)
-    #     if _id is None:
-    #         # objs = yield self.application.db.get_all(bucket)
-    #         print('no hay naditaaaaa')
-    #     else:
-    #         objs = yield self.application.db.delete(bucket, _id)
-    #     # self.set_status(403)
-    #     objs = json.dumps(objs)
-    #     self.set_header('Content-Type', 'text/javascript;charset=utf-8')
-    #     self.write(objs)
