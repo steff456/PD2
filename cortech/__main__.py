@@ -19,6 +19,7 @@ import tornado.ioloop
 # Local imports
 # from cortech.db import RiakDB
 from cortech.routes import ROUTES
+import cortech.ws.manager_ws as manager_ws
 
 # Other library imports
 import coloredlogs
@@ -51,6 +52,16 @@ if os.name == 'nt':
     clr = 'cls'
 
 
+async def watch(collection, manager):
+    global change_stream
+
+    async with collection.watch() as change_stream:
+        print(collection.watch)
+        async for change in change_stream:
+            print(change)
+            manager.notify(change)
+
+
 def main():
     logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
     settings = {"static_path": os.path.join(
@@ -67,7 +78,9 @@ def main():
     database = motor.motor_tornado.MotorClient(args.mongo_url)
     application.db = database[args.mongo_db][args.mongo_col]
     application.start_time = time.time()
+    application.manager = manager_ws.SocketManager()
     application.listen(args.port)
+    ioloop.add_callback(watch, application.db, application.manager)
     try:
         ioloop.start()
     except KeyboardInterrupt:

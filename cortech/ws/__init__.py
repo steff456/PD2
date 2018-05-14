@@ -19,8 +19,8 @@ MIT, see LICENSE for more details.
 import os
 import sys
 # New submodules defined inside this module must be imported here
-from . import mongo_ws
-mongo_ws
+from . import manager_ws
+manager_ws
 
 __version__ = '1.0.0'
 

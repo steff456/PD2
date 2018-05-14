@@ -23,6 +23,7 @@ import cortech.rest.oxigen_saturation_rest as oxigen_saturation_rest
 import cortech.rest.frequency_rest as frequency_rest
 import cortech.rest.cardiac_output_rest as cardiac_output_rest
 import cortech.rest.heart_rate_variability_rest as heart_rate_variability_rest
+import cortech.ws.ws as ws
 # import cortech.rest as rest
 
 # Define new rest associations
@@ -36,7 +37,11 @@ REST = [
 
 # Define new web rendering route associations
 WEB = [
-    (r'/', web.flights_handler.MainHandler)
+    (r'/', web.graphs_handler.MainHandler)
+]
+
+WS = [
+    (r"/socket", ws.MainSocket)
 ]
 
 ROUTES = REST + WEB + WS

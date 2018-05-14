@@ -19,8 +19,8 @@ MIT, see LICENSE for more details.
 import os
 import sys
 # New submodules defined inside this module must be imported here
-from . import flights_handler
-flights_handler
+from . import graphs_handler
+graphs_handler
 
 __version__ = '1.0.0'
 

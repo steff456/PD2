@@ -1,6 +1,6 @@
 # see also: https://github.com/MonsieurV/py-findpeaks/blob/master/tests/libs/detect_peaks.py
 
-from .detect_peaks import detect_peaks
+from cortech.rest.detect_peaks import detect_peaks
 
 __author__ = 'Kricki (https://github.com/Kricki)'
 __version__ = "1.0.0"
@@ -86,4 +86,3 @@ def findpeaks(signal, mph=None, mpd=1, threshold=0, mpp=None, edge='rising',
     peak_signal = [signal[k] for k in peak_index]
 
     return peak_index, peak_signal
-

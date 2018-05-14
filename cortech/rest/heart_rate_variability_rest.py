@@ -9,6 +9,11 @@ import tornado.web
 import tornado.escape
 from bson.objectid import ObjectId
 import cortech.rest as rest
+import scipy.io as sio
+import numpy as np
+import csv
+from cortech.rest.detect_peaks import detect_peaks
+from cortech.rest.findpeaks import compute_peak_prominence
 
 LOGGER = logging.getLogger(__name__)
 
@@ -52,7 +57,7 @@ class MainHandler(rest.BaseHandler):
             print(obj)
             v_pleth.append(obj['value'])
 
-        HRV = yield calculate_CO(v_pleth)
+        HRV = yield calculate_HRV(v_pleth)
         # self.set_status(403)
         objs = json.dumps(HRV)
         self.set_header('Content-Type', 'text/javascript;charset=utf-8')

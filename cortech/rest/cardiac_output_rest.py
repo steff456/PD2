@@ -9,6 +9,11 @@ import tornado.web
 import tornado.escape
 from bson.objectid import ObjectId
 import cortech.rest as rest
+import scipy.io as sio
+import numpy as np
+import csv
+from cortech.rest.detect_peaks import detect_peaks
+from cortech.rest.findpeaks import compute_peak_prominence
 
 LOGGER = logging.getLogger(__name__)
 
@@ -65,12 +70,6 @@ def calculate_CO(v_values, v_heartrate):
         n_area.append(np.trapz(v_values[x_start[0]:x_b[0]]))
         cardiacO.append((n_area[idw]*HR)/(Z_ao*1000))
 
-    # SV=area / 0.14 cm³
-    # cardiaO=(SV*HR)/1000 L
-    # Heart Rate Variability
-
-    # plt.plot(v_values)
-    # plt.show()
     return cardiacO
 
 

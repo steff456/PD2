@@ -10,6 +10,7 @@ __author__ = "Marcos Duarte, https://github.com/demotu/BMC"
 __version__ = "1.0.4"
 __license__ = "MIT"
 
+
 def detect_peaks(x, mph=None, mpd=1, threshold=0, edge='rising',
                  kpsh=False, valley=False, show=False, ax=None):
 
@@ -145,6 +146,7 @@ def detect_peaks(x, mph=None, mpd=1, threshold=0, edge='rising',
         _plot(x, mph, mpd, threshold, edge, valley, ax, ind)
 
     return ind
+
 
 def _plot(x, mph, mpd, threshold, edge, valley, ax, ind):
     """Plot results of the detect_peaks function, see its help."""
