@@ -79,6 +79,7 @@ def main():
     application.db = database[args.mongo_db][args.mongo_col]
     application.start_time = time.time()
     application.manager = manager_ws.SocketManager()
+    # application.manager.create_cache(application.db)
     application.listen(args.port)
     ioloop.add_callback(watch, application.db, application.manager)
     try:

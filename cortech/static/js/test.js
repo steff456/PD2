@@ -1,15 +1,4 @@
 // ------------------------------
-// WebSocket instructions
-// ------------------------------
-function webSocket(){
-  var ws = new WebSocket("ws://localhost:8000/socket");
-
-  ws.onmessage = function (event) {
-    console.log(event.data);
-  }
-}
-
-// ------------------------------
 // Plethysmogram graph
 // ------------------------------
 var pleth = {

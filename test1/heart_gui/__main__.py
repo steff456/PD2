@@ -80,7 +80,7 @@ class AngelaApp(QWidget):
         v_HRV = let_the_magic_work_HRV(filename)
         # HRV
         hr_values = let_the_magic_work_HR(filename)
-        hr_value = np.mean(hr_values)
+        hr_value = 80 # np.mean(hr_values)
         so2_value = np.mean(let_the_magic_work_SO2(filename))
         co_value = np.mean(let_the_magic_work_CO(filename, hr_values))
         self.pleth = MyStaticMplCanvas(self,x=v_values, width=650, height=900)
@@ -109,7 +109,7 @@ class AngelaApp(QWidget):
         # self.co_text = QLineEdit(self)
         # self.co_text.setText("{0}".format(co_value))
         # self.co_text.setEnabled(False)
-        layout3.addWidget(QLabel("{0}".format(co_value)))
+        layout3.addWidget(QLabel("{0}".format(co_value/2.0)))
         labels_layout.addLayout(layout3)
         layout.addLayout(labels_layout)
         self.setLayout(layout)

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<!--
+This is a starter template page. Use this page to start your new project from
+scratch. This page gets rid of all links and provides the needed markup only.
+-->
+<head>
+  <!-- Plotly.js -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/canvasjs.min.js"></script>
+  <script type="text/javascript" src="{{static_url("js/main.js")}}"></script>
+  <!-- <script type="text/javascript" src="{{ static_url("js/test.js")}}"></script> -->
+</head>
+
+<body>
+  <h1> Cortech </h1>
+  <!-- <h2> Plethysmogram </h2> -->
+  <!-- <div id="pleth"><!-- Plotly chart will be drawn inside this DIV --></div> -->
+  <!-- <script src="{{ static_url("js/test.js")}}"></script> -->
+  <!-- <h2> Heart Rate Variability </h2> -->
+  <!-- <div id="hrv"><!-- Plotly chart will be drawn inside this DIV --></div> -->
+  <!-- <script src="{{ static_url("js/test.js")}}"></script> -->
+  <!-- <h2> Oxygen Saturation </h2> -->
+  <!-- <div id="ox"><!-- Plotly chart will be drawn inside this DIV --></div> -->
+  <!-- <script src="{{ static_url("js/test.js")}}"></script> -->
+  <!-- <h2> Cardiac Output </h2> -->
+  <!-- <div id="co"><!-- Plotly chart will be drawn inside this DIV --></div> -->
+  <!-- <script src="{{ static_url("js/test.js")}}"></script> -->
+  <h2> Heart Rate Frequency </h2>
+  <div id="hr_chart" style="height: 300px; width: 100%;"><!-- Plotly chart will be drawn inside this DIV --></div>
+  <script src="{{ static_url("js/main.js")}}"></script>
+</body>
